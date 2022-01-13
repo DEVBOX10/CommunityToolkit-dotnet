@@ -5,6 +5,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using CommunityToolkit.Mvvm.SourceGenerators.Input.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -63,8 +64,10 @@ public sealed partial class IMessengerRegisterAllGenerator : IIncrementalGenerat
             CompilationUnitSyntax compilationUnit = Execute.GetSyntax(item);
 
             context.AddSource(
-                hintName: $"{item.FilenameHint}.cs",
+                hintName: $"{item.FilenameHint}_{Interlocked.Increment(ref x)}.cs",
                 sourceText: SourceText.From(compilationUnit.ToFullString(), Encoding.UTF8));
         });
     }
+
+    private static int x = 0;
 }
